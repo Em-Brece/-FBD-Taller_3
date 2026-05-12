@@ -14,8 +14,9 @@ app.add_middleware(
 )
 
 #os.environ para despliegue. Descomente cuando ya probó todo local.
+#client = MongoClient(os.environ["MONGO_URI"])
 
-client = MongoClient(os.environ["MONGO_URI"])
+client = MongoClient("mongodb://ISIS2304E11202610:oOgx7CDRGA0R@157.253.236.88:8087")
 
 # db = client["ISIS*******"]
 db = client["ISIS2304E11202610"]
@@ -27,14 +28,14 @@ def inicio():
 
 @app.get('/bares/{bar_id}/comentarios')
 def get_comentarios(bar_id: int):
-    comentarios = list(db["comentarios"].find({"bar_id": bar_id}, {"_id": 0}))
+    comentarios = list(db["Comments"].find({"bar_id": bar_id}, {"_id": 0}))
     return comentarios
 
 @app.post('/bares/{bar_id}/comentarios')
 def post_comentario(bar_id: int, datos: dict):
     datos['bar_id'] = bar_id
     datos['fecha']  = datetime.now().isoformat()
-    db["comentarios"].insert_one(datos)
+    db["Comments"].insert_one(datos)
     return {'mensaje': 'Comentario guardado'}
 
 
@@ -42,7 +43,7 @@ def post_comentario(bar_id: int, datos: dict):
 # Debe retornar todos los eventos del bar desde la colección 'eventos'
 @app.get('/bares/{bar_id}/eventos')
 def get_eventos(bar_id: int):
-    eventos = list(db["eventos"].find({"bar_id": bar_id}, {"_id": 0}))
+    eventos = list(db["Events"].find({"bar_id": bar_id}, {"_id": 0}))
     return eventos
 
 
@@ -52,6 +53,6 @@ def get_eventos(bar_id: int):
 @app.post('/bares/{bar_id}/eventos')
 def post_evento(bar_id: int, datos: dict):
     datos['bar_id'] = bar_id
-    datos['fecha']  = datetime.now().isoformat()
-    db["eventos"].insert_one(datos)
+    datos['fecha_creacion']  = datetime.now().isoformat()
+    db["Events"].insert_one(datos)
     return {'mensaje': 'Evento guardado'}
